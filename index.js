@@ -10,7 +10,7 @@ const app = express();
 var cors = require("cors");
 const authenticateUser = require("./middlewares/authenticateUser.js");
 app.use(cors());
-
+const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
 mongoDBConnection();
@@ -22,7 +22,6 @@ app.use("/signup", signupRouter);
 app.get("/", (req, res) => {
   res.json({ text: "hello world" });
 });
-const PORT = process.env.PORT || 5000;
 
 app.use((req, res) => {
   res.status(404).json({ success: false, errorMessage: "No page found" });
