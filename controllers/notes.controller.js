@@ -1,6 +1,6 @@
 const { Note } = require("../models/note.model");
 const { NotesList } = require("../models/notesList.model");
-export const addNote = async (req, res) => {
+const addNote = async (req, res) => {
   try {
     const { userId } = req.user;
     const body = req.body;
