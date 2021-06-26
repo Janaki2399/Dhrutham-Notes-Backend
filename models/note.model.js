@@ -9,7 +9,7 @@ const noteSchema = new Schema({
   text: String,
   isPinned: Boolean,
   color: String,
-  Labels: [{ type: Schema.Types.ObjectId, ref: "Label" }],
+  labelList: [{ type: Schema.Types.ObjectId, ref: "Label" }],
 });
 const Note = mongoose.model("Note", noteSchema);
 

@@ -3,6 +3,7 @@ const express = require("express");
 const loginRouter = require("./routes/login-router.js");
 const signupRouter = require("./routes/signup-router.js");
 const notesRouter = require("./routes/notes-router.js");
+const labelsRouter = require("./routes/labels-router.js");
 const mongoose = require("mongoose");
 const { mongoDBConnection } = require("./db/db.connect.js");
 
@@ -16,6 +17,7 @@ app.use(express.json());
 mongoDBConnection();
 
 app.use("/notes", authenticateUser, notesRouter);
+app.use("/labels", authenticateUser, labelsRouter);
 app.use("/login", loginRouter);
 app.use("/signup", signupRouter);
 
