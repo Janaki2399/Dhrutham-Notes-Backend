@@ -16,7 +16,10 @@ const addNote = async (req, res) => {
     }
     await noteList.list.push(note._id);
     await noteList.save();
-    const populatedNote = await note.populate({ path: "labelsList" });
+    const populatedNote = await note
+      .populate({ path: "labelList" })
+      .execPopulate();
+    console.log(populatedNote);
     res.status(200).json({ success: true, note: populatedNote });
   } catch (error) {
     console.log(error);
@@ -34,6 +37,7 @@ const getAllNotes = async (req, res) => {
     if (!noteList) {
       noteList = new NotesList({ user: userId, list: [] });
     }
+
     const populatedNoteList = await noteList
       .populate({
         path: "list",
@@ -85,6 +89,43 @@ const deleteLabelInNote = async (req, res) => {
     });
   }
 };
+const deleteNote = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const noteId = req.params.noteId;
+
+    const noteList = await NotesList.findOne({ user: userId });
+
+    noteList.list.pull(noteId);
+    await noteList.save();
+    await Note.deleteOne({ noteId });
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      errorMessage: "Unable to fetch notes.Try again later",
+    });
+  }
+};
+const addLabelsFromListToNote = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const noteId = req.params.noteId;
+    const { label } = req.body;
+    const note = await Note.findById(noteId);
+    note.labelList.push(label._id);
+    await note.save();
+    res.status(200).json({ success: true, label });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      errorMessage: "Unable to add label.Try again Later",
+    });
+  }
+};
 // const addLabelInNote = async (req, res) => {
 //   try {
 //     const { userId } = req.user;
@@ -114,4 +155,11 @@ const deleteLabelInNote = async (req, res) => {
 //   }
 // };
 
-module.exports = { addNote, getAllNotes, updateNote, deleteLabelInNote };
+module.exports = {
+  addNote,
+  getAllNotes,
+  updateNote,
+  deleteLabelInNote,
+  addLabelsFromListToNote,
+  deleteNote,
+};
