@@ -1,6 +1,4 @@
 const { Note } = require("../models/note.model");
-const { Label } = require("../models/label.model");
-const { LabelsList } = require("../models/labelsList.model");
 const { NotesList } = require("../models/notesList.model");
 const { extend } = require("lodash");
 const addNote = async (req, res) => {
@@ -19,7 +17,7 @@ const addNote = async (req, res) => {
     const populatedNote = await note
       .populate({ path: "labelList" })
       .execPopulate();
-    console.log(populatedNote);
+
     res.status(200).json({ success: true, note: populatedNote });
   } catch (error) {
     console.log(error);
@@ -60,10 +58,12 @@ const updateNote = async (req, res) => {
   try {
     const noteId = req.params.noteId;
     const note = await Note.findById(noteId);
+
     const updatedProperty = req.body;
     const updatedNote = extend(note, updatedProperty);
     await updatedNote.save();
-    res.status(200).json({ success: true });
+
+    res.status(200).json({ success: true, note: updatedNote });
   } catch (error) {
     res
       .status(500)
